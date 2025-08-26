@@ -34,10 +34,10 @@ else:
             state.points.drop(index=sample_row.index, inplace=True)
             st.session_state.question = fact_to_question(st.session_state.current_sample["fact"])
         else:
-            st.session_state.current_sample = None
+            st.session_state.current_sample = -1
 
     # ---- Button zum Starten ----
-    if st.button("Neues Spiel starten"):
+    if st.button("Neues Spiel starten") or st.session_state.current_sample is None:
         get_points()
         state.total_points = 0
         state.total_samples = 0
