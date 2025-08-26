@@ -28,7 +28,6 @@ else:
         st.session_state.current_sample = None
 
     def load_next_sample():
-        st.write(len(state.points))
         if not state.points.empty:
             sample_row = state.points.sample(n=1)
             st.session_state.current_sample = sample_row.iloc[0].to_dict()
