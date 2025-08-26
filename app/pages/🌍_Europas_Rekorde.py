@@ -5,7 +5,7 @@ import pandas as pd
 from io import BytesIO
 
 from europas_rekorde import records
-from openai_tools import fact_to_question, evaluate_answer
+from openai_tools import fact_to_question, evaluate_answer, hint_to_answer
 
 # ---- Session-State initialisieren ----
 state = st.session_state
@@ -20,7 +20,6 @@ else:
     def get_points():
         points = pd.read_csv("data/Europas_Rekorde/punkte_europa.csv", delimiter=";", index_col=0)
         points = points.join(records, how="left")
-        #points = points.sample(n=4)
         state.points = points
 
     # Session-State für den aktuellen Punkt
@@ -33,11 +32,12 @@ else:
             st.session_state.current_sample = sample_row.iloc[0].to_dict()
             # sample_row aus points entfernen
             state.points.drop(index=sample_row.index, inplace=True)
+            st.session_state.question = fact_to_question(st.session_state.current_sample["fact"])
         else:
             st.session_state.current_sample = None
 
     # ---- Button zum Starten ----
-    if st.button("Neues Spiel starten"):# or st.session_state.current_sample is None:
+    if st.button("Neues Spiel starten"):
         get_points()
         state.total_points = 0
         state.total_samples = 0
@@ -76,19 +76,19 @@ else:
 
             # Fact anzeigen
             st.subheader("Frage")
-            question = fact_to_question(sample["fact"])
-            st.text(question)
+            st.text(state.question)
 
             def clear_text():
                 st.session_state["user_answer"] = ""  # Setzt das Feld im Callback zurück
 
             # Antwortfeld und Button
             answer = st.text_input("Deine Antwort:", key="user_answer")
+
             if st.button("Abschicken"):
                 # Bewertung der Antwort
                 evaluation = evaluate_answer(
                     fact=sample["fact"],
-                    question=question,
+                    question=state.question,
                     user_answer=answer
                 )
 
@@ -103,7 +103,7 @@ else:
 
 
                 st.session_state.submitted_facts.append({
-                    "question": question,
+                    "question": state.question,
                     "user_answer": answer,
                     "fact": sample["fact"],
                     "feedback": evaluation["feedback"],
@@ -111,6 +111,10 @@ else:
                 })
                 st.session_state.total_points += evaluation["score"]
                 st.session_state.total_samples += 1
+
+            if st.button("Tipp geben"):
+                hint = hint_to_answer(sample["fact"], state.question)
+                st.warning(hint)
 
             if st.button("Nächste Frage", on_click=clear_text):
                 load_next_sample()

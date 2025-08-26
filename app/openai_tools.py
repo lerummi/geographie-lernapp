@@ -28,6 +28,29 @@ def fact_to_question(fact: str) -> str:
     return question
 
 
+def hint_to_answer(fact: str, question: str) -> str:
+    prompt = f"""
+    Gegeben ist ein Fakt und eine dazugehörige Frage. Der Nutzer - ein Kind der sechsten Klasse - soll die Frage beantworten.
+    Gib dem Nutzer einen kurzen, präzisen Hinweis, der ihm hilft die Frage zu beantworten.
+    Hinweise können z.B. sein: "Die Antwort reimt sich auf ...", "Beginnt mit den Buchstaben [erste zwei bis drei Buchstaben der Antwort]",
+    "Wo gibt es ...".
+    
+    Fakt: {fact}
+    Frage: {question}
+    
+    Antwort:
+    """
+    response = client.chat.completions.create(
+        model=os.environ["OPENAI_MODEL"],
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.8,
+        max_tokens=100
+    )
+    
+    hint = response.choices[0].message.content.strip()
+    return hint
+
+
 def evaluate_answer(fact: str, question: str, user_answer: str) -> dict:
     """
     Evaluiert die gegebene Antwort gegen den Fact/Frage unter Verwendung von Structured Outputs.
