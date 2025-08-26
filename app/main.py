@@ -4,6 +4,7 @@ import streamlit as st
 from auth import authenticator
 
 state = st.session_state
+state.logout = state.get("logout", None)
 
 dotenv.load_dotenv(".env")
 

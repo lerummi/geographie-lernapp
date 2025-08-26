@@ -30,7 +30,7 @@ records = pd.DataFrame(
         (26, "Am längsten zugefroren ist das Weiße Meer."),
         (27, "Europas zweithöchster Vulkan ist der 1277 m hohe Vesuv."),
         (28, "Deutschlands höchstes Mittelgebirge ist der Schwarzwald."),
-        (29, "An der Mündung des Rehins in die Nordsee liegt Rotterdam, der größte Hafen der Welt."),
+        (29, "An der Mündung des Rheins in die Nordsee liegt Rotterdam, der größte Hafen der Welt."),
         (30, "Weit nördlich des Polarkreises liegt Murmansk, Europas nördlichste Großstadt."),
         (31, "Alle Meere rund um Europa gehören zu einem einzigen Ozean: dem Atlanntik."),
         (32, "Die meisten Vulkane und gleichzeitig auch die größten Gletscher gibt es in Island."),
