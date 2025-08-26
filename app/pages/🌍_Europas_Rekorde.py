@@ -78,13 +78,18 @@ else:
             st.subheader("Frage")
             st.text(state.question)
 
-            def clear_text():
+            def clear_text_and_disable_next_question():
                 st.session_state["user_answer"] = ""  # Setzt das Feld im Callback zurück
+                st.session_state.next_question = False
+
+            def enable_next_question():
+                st.session_state.next_question = True
+
 
             # Antwortfeld und Button
             answer = st.text_input("Deine Antwort:", key="user_answer")
 
-            if st.button("Abschicken"):
+            if st.button("Abschicken", on_click=enable_next_question):
                 # Bewertung der Antwort
                 evaluation = evaluate_answer(
                     fact=sample["fact"],
@@ -116,7 +121,12 @@ else:
                 hint = hint_to_answer(sample["fact"], state.question)
                 st.warning(hint)
 
-            if st.button("Nächste Frage", on_click=clear_text):
+
+            if st.button(
+                "Nächste Frage", 
+                on_click=clear_text_and_disable_next_question, 
+                disabled=not st.session_state.get("next_question", False)
+            ):
                 load_next_sample()
                 st.rerun()
 
